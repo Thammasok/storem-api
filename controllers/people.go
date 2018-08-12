@@ -1,8 +1,7 @@
-package main
+package controllers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,6 +15,7 @@ type Person struct {
 	Address   *Address `json:"address,omitempty"`
 }
 
+// The Address Type
 type Address struct {
 	City  string `json:"city,omitempty"`
 	State string `json:"state,omitempty"`
@@ -26,6 +26,12 @@ var people []Person
 
 // Display all from the people var
 func GetPeople(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	//https://golang.org/pkg/net/http/
+	w.WriteHeader(http.StatusOK)
+
 	json.NewEncoder(w).Encode(people)
 }
 
@@ -41,7 +47,9 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// json.NewEncoder(w).Encode(person)
+	w.Header().Set("Content-Type", "application/json")
+	//https://golang.org/pkg/net/http/
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&Person{})
 }
 
@@ -56,6 +64,11 @@ func CreatePerson(w http.ResponseWriter, r *http.Request) {
 
 	onePerson.ID = params["id"]
 	people = append(people, onePerson)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	//https://golang.org/pkg/net/http/
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(people)
 }
 
@@ -68,20 +81,16 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	//https://golang.org/pkg/net/http/
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(people)
 }
 
-// main function to boot up everything
-func main() {
-
+func init() {
 	people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
 	people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
 	people = append(people, Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
-
-	router := mux.NewRouter()
-	router.HandleFunc("/people", GetPeople).Methods("GET")
-	router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
-	router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
-	router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":3881", router))
 }
