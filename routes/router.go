@@ -5,7 +5,10 @@ import "github.com/gorilla/mux"
 //New Router
 func NewRouter() *mux.Router {
 	r := mux.NewRouter()
-	peopleRouter(r)
-	homeRouter(r)
+
+	people(r)
+	home(r)
+	user(r)
+
 	return r
 }
